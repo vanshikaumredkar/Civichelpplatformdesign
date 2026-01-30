@@ -7,12 +7,21 @@ import { TrackIssue } from "@/app/components/TrackIssue";
 import { Credits } from "@/app/components/Credits";
 import { EmergencyButton } from "@/app/components/EmergencyButton";
 import { AIChat } from "@/app/components/AIChat";
+import { Login } from "@/app/components/Login";
+import { Dashboard } from "@/app/components/Dashboard";
+import { About } from "@/app/components/About";
+import { Contact } from "@/app/components/Contact";
+import { Privacy } from "@/app/components/Privacy";
+import { Terms } from "@/app/components/Terms";
+import { Sitemap } from "@/app/components/Sitemap";
 import { motion, AnimatePresence } from "motion/react";
+import { FileText, Github, Twitter, Linkedin, Facebook } from "lucide-react";
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("en");
   const [currentPage, setCurrentPage] = useState("home");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // Handle theme toggle
   useEffect(() => {
@@ -25,67 +34,42 @@ const App: React.FC = () => {
 
   const toggleDarkMode = () => setDarkMode(!darkMode);
 
+  const handleLogin = () => {
+    setIsLoggedIn(true);
+    setCurrentPage("dashboard");
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setCurrentPage("home");
+  };
+
   const renderPage = () => {
     switch (currentPage) {
       case "home":
-        return <Hero />;
+        return <Hero onNavigate={setCurrentPage} />;
       case "report":
-      case "report-letter":
-      case "report-voice":
         return <ReportForm />;
+      case "dashboard":
+        return isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />;
+      case "login":
+        return <Login onLogin={handleLogin} />;
+      case "about":
+        return <About />;
+      case "contact":
+        return <Contact />;
+      case "privacy":
+        return <Privacy />;
+      case "terms":
+        return <Terms />;
+      case "sitemap":
+        return <Sitemap onNavigate={setCurrentPage} />;
       case "track":
         return <TrackIssue />;
       case "credits":
         return <Credits />;
-      case "about":
-        return (
-          <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-            <h2 className="text-4xl font-bold mb-6 text-[var(--ashoka-blue)]">About Swavlamban Bharat</h2>
-            <p className="text-xl text-muted-foreground leading-relaxed mb-8">
-              Swavlamban Bharat is a digital gateway for Indian citizens to actively participate in urban governance. 
-              Our platform simplifies the process of reporting civic issues and ensures transparent tracking until resolution.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12 text-left">
-              <div className="p-6 border border-border rounded-2xl">
-                <h4 className="font-bold mb-2">Citizen-First</h4>
-                <p className="text-sm text-muted-foreground">Designed for ease of use by common citizens with multi-language support.</p>
-              </div>
-              <div className="p-6 border border-border rounded-2xl">
-                <h4 className="font-bold mb-2">AI Powered</h4>
-                <p className="text-sm text-muted-foreground">Smart assistant to help you navigate services and file complaints faster.</p>
-              </div>
-              <div className="p-6 border border-border rounded-2xl">
-                <h4 className="font-bold mb-2">Incentivized</h4>
-                <p className="text-sm text-muted-foreground">Earn credits for your contributions and redeem them for daily utility products.</p>
-              </div>
-            </div>
-          </div>
-        );
-      case "login":
-        return (
-          <div className="max-w-md mx-auto px-4 py-20">
-            <div className="bg-card border border-border p-8 rounded-3xl shadow-xl">
-              <h2 className="text-2xl font-bold mb-6 text-center">Login to your account</h2>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-bold mb-2">Mobile Number</label>
-                  <input type="text" placeholder="+91 98765 43210" className="w-full px-4 py-3 bg-muted border border-border rounded-xl" />
-                </div>
-                <button 
-                  onClick={() => setCurrentPage("home")}
-                  className="w-full py-3 bg-[var(--ashoka-blue)] text-white rounded-xl font-bold"
-                >
-                  Send OTP
-                </button>
-                <div className="text-center text-sm text-muted-foreground">
-                  Don't have an account? <span className="text-[var(--ashoka-blue)] font-bold cursor-pointer">Register</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
       default:
-        return <Hero />;
+        return <Hero onNavigate={setCurrentPage} />;
     }
   };
 
@@ -100,9 +84,11 @@ const App: React.FC = () => {
         setLanguage={setLanguage}
         onNavigate={setCurrentPage}
         currentPage={currentPage}
+        isLoggedIn={isLoggedIn}
+        onLogout={handleLogout}
       />
 
-      <main>
+      <main className="min-h-[70vh]">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentPage}
@@ -121,36 +107,86 @@ const App: React.FC = () => {
       <AIChat />
 
       {/* Footer */}
-      <footer className="border-t border-border mt-20 bg-muted/30">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[var(--ashoka-blue)] rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-sm">SB</span>
+      <footer className="bg-blue-950 text-white mt-20">
+        <div className="max-w-7xl mx-auto px-4 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+            <div className="space-y-6">
+              <div className="flex items-center group">
+                <div className="w-10 h-10 mr-3 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <FileText className="text-white" size={24} />
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-bold text-lg tracking-tight leading-none">
+                    Civic<span className="text-green-400">Connect</span>
+                  </span>
+                  <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Government of India</span>
+                </div>
               </div>
-              <div>
-                <div className="font-bold">Swavlamban Bharat</div>
-                <div className="text-xs text-muted-foreground">© 2026 Government of India Initiative</div>
+              <p className="text-blue-200 text-sm leading-relaxed">
+                Empowering citizens with digital tools to build a better future. Dedicated to transparency and efficient civic management.
+              </p>
+              <div className="flex space-x-4">
+                <button className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-blue-800 transition-colors">
+                  <Twitter size={16} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-blue-800 transition-colors">
+                  <Facebook size={16} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-blue-800 transition-colors">
+                  <Linkedin size={16} />
+                </button>
+                <button className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-blue-800 transition-colors">
+                  <Github size={16} />
+                </button>
               </div>
-            </div>
-            
-            <div className="flex space-x-8 text-sm font-medium text-muted-foreground">
-              <a href="#" className="hover:text-foreground">Privacy Policy</a>
-              <a href="#" className="hover:text-foreground">Terms of Service</a>
-              <a href="#" className="hover:text-foreground">Contact Us</a>
-              <a href="#" className="hover:text-foreground">Sitemap</a>
             </div>
 
-            <div className="flex items-center space-x-4">
-              <div className="text-right hidden sm:block">
-                <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Last Updated</div>
-                <div className="text-xs font-bold">Jan 30, 2026</div>
-              </div>
-              <img 
-                src="https://upload.wikimedia.org/wikipedia/commons/9/93/Digital_India_logo.svg" 
-                alt="Digital India" 
-                className="h-10 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all"
-              />
+            <div>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Platform</h4>
+              <ul className="space-y-3 text-sm text-blue-100">
+                <li><button onClick={() => setCurrentPage("home")} className="hover:text-white hover:translate-x-1 transition-all">Home</button></li>
+                <li><button onClick={() => setCurrentPage("about")} className="hover:text-white hover:translate-x-1 transition-all">About Us</button></li>
+                <li><button onClick={() => setCurrentPage("dashboard")} className="hover:text-white hover:translate-x-1 transition-all">Admin Portal</button></li>
+                <li><button onClick={() => setCurrentPage("contact")} className="hover:text-white hover:translate-x-1 transition-all">Support</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Legal</h4>
+              <ul className="space-y-3 text-sm text-blue-100">
+                <li><button onClick={() => setCurrentPage("privacy")} className="hover:text-white hover:translate-x-1 transition-all">Privacy Policy</button></li>
+                <li><button onClick={() => setCurrentPage("terms")} className="hover:text-white hover:translate-x-1 transition-all">Terms of Service</button></li>
+                <li><button onClick={() => setCurrentPage("terms")} className="hover:text-white hover:translate-x-1 transition-all">Reward Guidelines</button></li>
+                <li><button onClick={() => setCurrentPage("sitemap")} className="hover:text-white hover:translate-x-1 transition-all">Sitemap</button></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Contact</h4>
+              <ul className="space-y-4 text-sm text-blue-100">
+                <li className="flex items-start space-x-3">
+                  <span className="font-bold text-blue-300">HQ:</span>
+                  <span>123, Governance Tower, Sansad Marg, New Delhi - 110001</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <span className="font-bold text-blue-300">Call:</span>
+                  <span>1800-CIVIC-123</span>
+                </li>
+                <li className="flex items-center space-x-3">
+                  <span className="font-bold text-blue-300">Email:</span>
+                  <span>info@civicconnect.gov.in</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="pt-8 border-t border-blue-900 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="text-xs text-blue-400 font-medium">
+              © 2026 CivicConnect. A project by the Ministry of Electronics & IT.
+            </div>
+            <div className="flex items-center space-x-6 opacity-60">
+              <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="GoI" className="h-10 brightness-0 invert" />
+              <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Digital_India_logo.svg" alt="DI" className="h-10 brightness-0 invert" />
             </div>
           </div>
         </div>

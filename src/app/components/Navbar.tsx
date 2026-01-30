@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Sun, Moon, Globe, Phone, User, ChevronDown, MessageSquare, Mic } from "lucide-react";
+import { Sun, Moon, Globe, User, ChevronDown, LayoutDashboard, FileText, Info, LogOut, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 interface NavbarProps {
@@ -9,13 +9,13 @@ interface NavbarProps {
   setLanguage: (lang: string) => void;
   onNavigate: (page: string) => void;
   currentPage: string;
+  isLoggedIn: boolean;
+  onLogout: () => void;
 }
 
 const languages = [
   { code: "en", label: "English" },
   { code: "hi", label: "हिंदी" },
-  { code: "mr", label: "मराठी" },
-  { code: "hg", label: "Hinglish" },
 ];
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -25,119 +25,75 @@ export const Navbar: React.FC<NavbarProps> = ({
   setLanguage,
   onNavigate,
   currentPage,
+  isLoggedIn,
+  onLogout,
 }) => {
-  const [isReportDropdownOpen, setIsReportDropdownOpen] = useState(false);
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   const navItems = [
-    { id: "home", label: "Home" },
-    { id: "report", label: "Report Issue", hasDropdown: true },
-    { id: "track", label: "Track Issue" },
-    { id: "credits", label: "Credits" },
-    { id: "about", label: "About" },
+    { id: "home", label: "Home", icon: null },
+    { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={16} />, auth: true },
+    { id: "about", label: "About", icon: null },
+    { id: "contact", label: "Contact", icon: null },
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border">
+    <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div 
-            className="flex items-center cursor-pointer" 
+            className="flex items-center cursor-pointer group" 
             onClick={() => onNavigate("home")}
           >
-            <div className="w-8 h-8 mr-2 bg-[var(--ashoka-blue)] rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xs">SB</span>
+            <div className="w-10 h-10 mr-3 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg group-hover:bg-blue-800 transition-colors">
+              <FileText className="text-white" size={24} />
             </div>
-            <span className="font-bold text-xl tracking-tight hidden sm:block">
-              Swavlamban <span className="text-[var(--saffron)]">Bharat</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-bold text-lg tracking-tight leading-none text-blue-900 dark:text-blue-100">
+                Civic<span className="text-green-600">Connect</span>
+              </span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Tech for Governance</span>
+            </div>
           </div>
 
           {/* Nav Items */}
-          <div className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => (
-              <div key={item.id} className="relative">
-                {item.hasDropdown ? (
-                  <div 
-                    className="relative"
-                    onMouseEnter={() => setIsReportDropdownOpen(true)}
-                    onMouseLeave={() => setIsReportDropdownOpen(false)}
-                  >
-                    <button
-                      className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                        currentPage === "report" ? "text-[var(--ashoka-blue)] font-bold" : "hover:text-[var(--ashoka-blue)]"
-                      }`}
-                    >
-                      <span>{item.label}</span>
-                      <ChevronDown size={14} />
-                    </button>
-                    <AnimatePresence>
-                      {isReportDropdownOpen && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          className="absolute left-0 mt-0 w-48 rounded-md shadow-lg bg-card border border-border overflow-hidden"
-                        >
-                          <div className="py-1">
-                            <button
-                              onClick={() => {
-                                onNavigate("report-letter");
-                                setIsReportDropdownOpen(false);
-                              }}
-                              className="flex items-center px-4 py-2 text-sm w-full text-left hover:bg-muted"
-                            >
-                              <MessageSquare size={16} className="mr-2" />
-                              ✍️ Type a Letter
-                            </button>
-                            <button
-                              onClick={() => {
-                                onNavigate("report-voice");
-                                setIsReportDropdownOpen(false);
-                              }}
-                              className="flex items-center px-4 py-2 text-sm w-full text-left hover:bg-muted"
-                            >
-                              <Mic size={16} className="mr-2" />
-                              🎤 Voice Complaint
-                            </button>
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                ) : (
-                  <button
-                    onClick={() => onNavigate(item.id)}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      currentPage === item.id ? "text-[var(--ashoka-blue)] font-bold underline decoration-2 underline-offset-4" : "hover:text-[var(--ashoka-blue)]"
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                )}
-              </div>
+          <div className="hidden md:flex items-center space-x-1">
+            {navItems.filter(item => !item.auth || isLoggedIn).map((item) => (
+              <button
+                key={item.id}
+                onClick={() => onNavigate(item.id)}
+                className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center space-x-2 ${
+                  currentPage === item.id 
+                    ? "text-blue-700 bg-blue-50 dark:bg-blue-900/20" 
+                    : "text-muted-foreground hover:text-blue-700 hover:bg-muted"
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
             ))}
           </div>
 
           {/* Right Actions */}
-          <div className="flex items-center space-x-2 md:space-x-4">
+          <div className="flex items-center space-x-2">
             {/* Language Selector */}
             <div className="relative">
               <button
                 onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
-                className="p-2 rounded-full hover:bg-muted transition-colors flex items-center space-x-1"
+                className="p-2 rounded-lg hover:bg-muted transition-colors flex items-center space-x-2 border border-transparent hover:border-border"
               >
-                <Globe size={20} />
-                <span className="text-xs font-semibold uppercase hidden sm:inline">{language}</span>
+                <Globe size={18} className="text-blue-700" />
+                <span className="text-xs font-bold uppercase hidden sm:inline">{language === "en" ? "EN" : "HI"}</span>
               </button>
               <AnimatePresence>
                 {isLangDropdownOpen && (
                   <motion.div
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="absolute right-0 mt-2 w-32 rounded-md shadow-lg bg-card border border-border overflow-hidden"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-32 rounded-xl shadow-xl bg-card border border-border overflow-hidden py-1"
                   >
                     {languages.map((lang) => (
                       <button
@@ -146,8 +102,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                           setLanguage(lang.code);
                           setIsLangDropdownOpen(false);
                         }}
-                        className={`block px-4 py-2 text-sm w-full text-left hover:bg-muted ${
-                          language === lang.code ? "bg-muted font-bold" : ""
+                        className={`flex items-center justify-between px-4 py-2 text-sm w-full text-left hover:bg-muted ${
+                          language === lang.code ? "text-blue-700 font-bold bg-blue-50/50" : ""
                         }`}
                       >
                         {lang.label}
@@ -161,20 +117,67 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Dark Mode Toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 rounded-full hover:bg-muted transition-colors"
-              title={darkMode ? "Switch to Light Mode" : "Switch to Night Mode"}
+              className="p-2 rounded-lg hover:bg-muted transition-colors border border-transparent hover:border-border"
             >
-              {darkMode ? <Sun size={20} /> : <Moon size={20} />}
+              {darkMode ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-blue-700" />}
             </button>
 
-            {/* Login */}
+            {/* Report Issue Button - Primary */}
             <button
-              onClick={() => onNavigate("login")}
-              className="flex items-center space-x-1 px-4 py-2 bg-[var(--ashoka-blue)] text-white rounded-full text-sm font-bold hover:opacity-90 transition-opacity"
+              onClick={() => onNavigate("report")}
+              className={`hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 ${
+                currentPage === "report" 
+                  ? "bg-green-700 text-white" 
+                  : "bg-green-600 text-white hover:bg-green-700"
+              }`}
             >
-              <User size={16} />
-              <span className="hidden sm:inline">Login</span>
+              <FileText size={16} />
+              <span>Report Issue</span>
             </button>
+
+            {/* Profile / Auth */}
+            {isLoggedIn ? (
+              <div className="relative">
+                <button
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                  className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center border border-blue-200 dark:border-blue-800 overflow-hidden"
+                >
+                  <User size={20} className="text-blue-700" />
+                </button>
+                <AnimatePresence>
+                  {isProfileDropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      className="absolute right-0 mt-2 w-48 rounded-xl shadow-xl bg-card border border-border overflow-hidden py-1"
+                    >
+                      <button
+                        onClick={() => { onNavigate("dashboard"); setIsProfileDropdownOpen(false); }}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm w-full text-left hover:bg-muted"
+                      >
+                        <LayoutDashboard size={16} />
+                        <span>Dashboard</span>
+                      </button>
+                      <button
+                        onClick={() => { onLogout(); setIsProfileDropdownOpen(false); }}
+                        className="flex items-center space-x-2 px-4 py-2 text-sm w-full text-left hover:bg-muted text-red-600"
+                      >
+                        <LogOut size={16} />
+                        <span>Logout</span>
+                      </button>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            ) : (
+              <button
+                onClick={() => onNavigate("login")}
+                className="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-bold hover:bg-blue-800 transition-colors shadow-md active:scale-95"
+              >
+                Login
+              </button>
+            )}
           </div>
         </div>
       </div>
