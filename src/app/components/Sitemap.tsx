@@ -82,7 +82,7 @@ export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                   <div className="w-4 h-4 bg-blue-700 rounded-full border-2 border-white shadow-lg relative z-10" />
                   <div className="mt-2 bg-white dark:bg-card px-2 py-1 rounded-md shadow-md text-[10px] font-bold border border-border opacity-0 group-hover:opacity-100 transition-opacity">
                     {m.label}
-                  </p>
+                  </div>
                 </div>
               ))}
             </div>

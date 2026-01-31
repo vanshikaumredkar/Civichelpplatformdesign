@@ -16,12 +16,15 @@ import { Terms } from "@/app/components/Terms";
 import { Sitemap } from "@/app/components/Sitemap";
 import { motion, AnimatePresence } from "motion/react";
 import { FileText, Github, Twitter, Linkedin, Facebook } from "lucide-react";
+import { translations } from "@/app/utils/translations";
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
   const [language, setLanguage] = useState("en");
   const [currentPage, setCurrentPage] = useState("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const t = translations[language] || translations.en;
 
   // Handle theme toggle
   useEffect(() => {
@@ -47,9 +50,9 @@ const App: React.FC = () => {
   const renderPage = () => {
     switch (currentPage) {
       case "home":
-        return <Hero onNavigate={setCurrentPage} />;
+        return <Hero onNavigate={setCurrentPage} language={language} />;
       case "report":
-        return <ReportForm />;
+        return <ReportForm language={language} />;
       case "dashboard":
         return isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />;
       case "login":
@@ -69,7 +72,7 @@ const App: React.FC = () => {
       case "credits":
         return <Credits />;
       default:
-        return <Hero onNavigate={setCurrentPage} />;
+        return <Hero onNavigate={setCurrentPage} language={language} />;
     }
   };
 
@@ -117,13 +120,13 @@ const App: React.FC = () => {
                 </div>
                 <div className="flex flex-col">
                   <span className="font-bold text-lg tracking-tight leading-none">
-                    Civic<span className="text-green-400">Connect</span>
+                    {t.brand}
                   </span>
-                  <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">Government of India</span>
+                  <span className="text-[10px] font-bold text-blue-300 uppercase tracking-widest">{t.tagline}</span>
                 </div>
               </div>
               <p className="text-blue-200 text-sm leading-relaxed">
-                Empowering citizens with digital tools to build a better future. Dedicated to transparency and efficient civic management.
+                {language === "hi" ? "नागरिकों को बेहतर भविष्य बनाने के लिए डिजिटल उपकरणों के साथ सशक्त बनाना। पारदर्शिता और कुशल नागरिक प्रबंधन के लिए समर्पित।" : "Empowering citizens with digital tools to build a better future. Dedicated to transparency and efficient civic management."}
               </p>
               <div className="flex space-x-4">
                 <button className="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center hover:bg-blue-800 transition-colors">
@@ -142,39 +145,34 @@ const App: React.FC = () => {
             </div>
 
             <div>
-              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Platform</h4>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">{language === "hi" ? "प्लेटफॉर्म" : "Platform"}</h4>
               <ul className="space-y-3 text-sm text-blue-100">
-                <li><button onClick={() => setCurrentPage("home")} className="hover:text-white hover:translate-x-1 transition-all">Home</button></li>
-                <li><button onClick={() => setCurrentPage("about")} className="hover:text-white hover:translate-x-1 transition-all">About Us</button></li>
-                <li><button onClick={() => setCurrentPage("dashboard")} className="hover:text-white hover:translate-x-1 transition-all">Admin Portal</button></li>
-                <li><button onClick={() => setCurrentPage("contact")} className="hover:text-white hover:translate-x-1 transition-all">Support</button></li>
+                <li><button onClick={() => setCurrentPage("home")} className="hover:text-white hover:translate-x-1 transition-all">{t.home}</button></li>
+                <li><button onClick={() => setCurrentPage("about")} className="hover:text-white hover:translate-x-1 transition-all">{t.about}</button></li>
+                <li><button onClick={() => setCurrentPage("dashboard")} className="hover:text-white hover:translate-x-1 transition-all">{t.dashboard}</button></li>
+                <li><button onClick={() => setCurrentPage("contact")} className="hover:text-white hover:translate-x-1 transition-all">{t.contact}</button></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Legal</h4>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">{language === "hi" ? "कानूनी" : "Legal"}</h4>
               <ul className="space-y-3 text-sm text-blue-100">
                 <li><button onClick={() => setCurrentPage("privacy")} className="hover:text-white hover:translate-x-1 transition-all">Privacy Policy</button></li>
                 <li><button onClick={() => setCurrentPage("terms")} className="hover:text-white hover:translate-x-1 transition-all">Terms of Service</button></li>
-                <li><button onClick={() => setCurrentPage("terms")} className="hover:text-white hover:translate-x-1 transition-all">Reward Guidelines</button></li>
                 <li><button onClick={() => setCurrentPage("sitemap")} className="hover:text-white hover:translate-x-1 transition-all">Sitemap</button></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">Contact</h4>
+              <h4 className="font-bold text-sm uppercase tracking-widest text-blue-300 mb-6">{t.contact}</h4>
               <ul className="space-y-4 text-sm text-blue-100">
                 <li className="flex items-start space-x-3">
                   <span className="font-bold text-blue-300">HQ:</span>
-                  <span>123, Governance Tower, Sansad Marg, New Delhi - 110001</span>
+                  <span>123, Sansad Marg, New Delhi - 110001</span>
                 </li>
                 <li className="flex items-center space-x-3">
                   <span className="font-bold text-blue-300">Call:</span>
                   <span>1800-CIVIC-123</span>
-                </li>
-                <li className="flex items-center space-x-3">
-                  <span className="font-bold text-blue-300">Email:</span>
-                  <span>info@civicconnect.gov.in</span>
                 </li>
               </ul>
             </div>
@@ -182,7 +180,7 @@ const App: React.FC = () => {
 
           <div className="pt-8 border-t border-blue-900 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="text-xs text-blue-400 font-medium">
-              © 2026 CivicConnect. A project by the Ministry of Electronics & IT.
+              © 2026 {t.brand}. A Government of India Initiative.
             </div>
             <div className="flex items-center space-x-6 opacity-60">
               <img src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" alt="GoI" className="h-10 brightness-0 invert" />

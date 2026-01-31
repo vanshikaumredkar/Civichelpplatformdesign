@@ -11,7 +11,9 @@ import {
   ChevronRight,
   TrendingUp,
   Users,
-  AlertCircle
+  AlertCircle,
+  FileText,
+  LogOut
 } from "lucide-react";
 import { motion } from "motion/react";
 

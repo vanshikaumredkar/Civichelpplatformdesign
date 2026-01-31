@@ -2,15 +2,18 @@ import React from "react";
 import { ArrowRight, FileText, Info, ShieldCheck, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { ImageWithFallback } from "@/app/components/figma/ImageWithFallback";
+import { translations } from "@/app/utils/translations";
 
 interface HeroProps {
   onNavigate: (page: string) => void;
+  language?: string;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
+export const Hero: React.FC<HeroProps> = ({ onNavigate, language = "en" }) => {
+  const t = translations[language] || translations.en;
+  
   return (
     <div className="relative overflow-hidden bg-background">
-      {/* Background Decor */}
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-blue-100 dark:bg-blue-900/10 rounded-full blur-3xl opacity-50" />
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-green-100 dark:bg-green-900/10 rounded-full blur-3xl opacity-50" />
 
@@ -23,25 +26,27 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
           >
             <div className="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-100 dark:border-blue-800 mb-6">
               <ShieldCheck className="text-blue-700" size={16} />
-              <span className="text-xs font-bold text-blue-800 dark:text-blue-200 uppercase tracking-widest">Empowering Citizens</span>
+              <span className="text-xs font-bold text-blue-800 dark:text-blue-200 uppercase tracking-widest">
+                {language === "hi" ? "नागरिकों का सशक्तिकरण" : "Empowering Citizens"}
+              </span>
             </div>
             
             <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-6 text-blue-950 dark:text-white">
-              Smarter Solutions for <br />
-              <span className="text-blue-700">Better Governance</span>
+              {t.heroTitle.split('Better')[0]} <br />
+              <span className="text-blue-700">{t.heroTitle.split('Better')[1] || "Better Governance"}</span>
             </h1>
             
             <p className="text-lg text-muted-foreground mb-10 max-w-lg leading-relaxed">
-              CivicConnect is your direct link to local authorities. Report public infrastructure issues, track resolutions in real-time, and help us build a cleaner, safer community together.
+              {t.heroSub}
             </p>
 
             <div className="flex flex-wrap gap-4">
               <button 
                 onClick={() => onNavigate("report")}
-                className="px-8 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 shadow-lg shadow-green-200 dark:shadow-none transition-all flex items-center space-x-2 group"
+                className="px-8 py-4 bg-green-600 text-white rounded-xl font-bold text-lg hover:bg-green-700 shadow-lg transition-all flex items-center space-x-2 group"
               >
                 <FileText size={20} />
-                <span>Report an Issue</span>
+                <span>{t.reportIssue}</span>
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </button>
               <button 
@@ -49,25 +54,8 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
                 className="px-8 py-4 bg-white dark:bg-muted border-2 border-blue-100 dark:border-blue-900 text-blue-700 dark:text-blue-300 rounded-xl font-bold text-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all flex items-center space-x-2"
               >
                 <Info size={20} />
-                <span>Learn More</span>
+                <span>{t.learnMore}</span>
               </button>
-            </div>
-
-            <div className="mt-12 flex items-center space-x-8 opacity-60">
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-blue-950 dark:text-white">50k+</span>
-                <span className="text-xs font-semibold uppercase">Reports Fixed</span>
-              </div>
-              <div className="w-px h-8 bg-border" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-blue-950 dark:text-white">120+</span>
-                <span className="text-xs font-semibold uppercase">Areas Covered</span>
-              </div>
-              <div className="w-px h-8 bg-border" />
-              <div className="flex flex-col">
-                <span className="text-2xl font-bold text-blue-950 dark:text-white">4.8/5</span>
-                <span className="text-xs font-semibold uppercase">User Rating</span>
-              </div>
             </div>
           </motion.div>
 
@@ -86,7 +74,6 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
               <div className="absolute inset-0 bg-gradient-to-t from-blue-950/40 to-transparent" />
             </div>
             
-            {/* Floating Card 1 */}
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4 }}
@@ -96,8 +83,8 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate }) => {
                 <Zap size={20} />
               </div>
               <div>
-                <div className="text-xs font-bold text-muted-foreground uppercase">Fast Response</div>
-                <div className="text-sm font-bold">Verified in 24h</div>
+                <div className="text-xs font-bold text-muted-foreground uppercase">{language === "hi" ? "त्वरित प्रतिक्रिया" : "Fast Response"}</div>
+                <div className="text-sm font-bold">{language === "hi" ? "24 घंटे में समाधान" : "Verified in 24h"}</div>
               </div>
             </motion.div>
           </motion.div>

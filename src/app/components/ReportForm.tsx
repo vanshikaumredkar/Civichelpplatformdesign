@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { 
   FileText, 
   Image as ImageIcon, 
@@ -7,27 +7,33 @@ import {
   CheckCircle2,
   ChevronRight,
   ChevronLeft,
-  X
+  X,
+  Trash2
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { toast } from "sonner";
+import { translations } from "@/app/utils/translations";
 
-export const ReportForm: React.FC = () => {
+export const ReportForm: React.FC<{ language?: string }> = ({ language = "en" }) => {
+  const t = translations[language] || translations.en;
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     issueType: "",
     description: "",
-    hasImage: false,
-    hasVideo: false,
+    imageFile: null as File | null,
+    videoFile: null as File | null,
   });
+
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const videoInputRef = useRef<HTMLInputElement>(null);
 
   const handleNext = () => {
     if (step === 1 && !formData.issueType) {
-      toast.error("Please enter the issue type");
+      toast.error(language === "hi" ? "कृपया समस्या का प्रकार चुनें" : "Please enter the issue type");
       return;
     }
     if (step === 2 && !formData.description) {
-      toast.error("Please provide a description");
+      toast.error(language === "hi" ? "कृपया विवरण प्रदान करें" : "Please provide a description");
       return;
     }
     setStep(step + 1);
@@ -36,19 +42,44 @@ export const ReportForm: React.FC = () => {
   const handleBack = () => setStep(step - 1);
 
   const handleSubmit = () => {
-    toast.success("Complaint submitted successfully! ID: CC-2026-X12");
+    toast.success(language === "hi" ? "शिकायत सफलतापूर्वक दर्ज की गई! आईडी: SB-2026-X12" : "Complaint submitted successfully! ID: SB-2026-X12");
     setStep(4);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'video') => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (type === 'image') setFormData({ ...formData, imageFile: file });
+      else setFormData({ ...formData, videoFile: file });
+      toast.success(`${file.name} uploaded!`);
+    }
   };
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-12">
+      {/* Hidden Inputs */}
+      <input 
+        type="file" 
+        accept="image/*" 
+        className="hidden" 
+        ref={imageInputRef} 
+        onChange={(e) => handleFileChange(e, 'image')}
+      />
+      <input 
+        type="file" 
+        accept="video/*" 
+        className="hidden" 
+        ref={videoInputRef} 
+        onChange={(e) => handleFileChange(e, 'video')}
+      />
+
       <div className="mb-12">
         <h2 className="text-3xl font-bold text-center mb-4 text-blue-900 dark:text-blue-100 flex items-center justify-center space-x-2">
           <FileText className="text-blue-700" />
-          <span>Report a Civic Issue</span>
+          <span>{t.reportIssue}</span>
         </h2>
         <p className="text-center text-muted-foreground max-w-md mx-auto mb-8">
-          Help us improve your community by detailing the problem below. Our team will review and act promptly.
+          {language === "hi" ? "समस्या का विवरण नीचे देकर हमारे समुदाय को बेहतर बनाने में मदद करें।" : "Help us improve your community by detailing the problem below."}
         </p>
         
         <div className="flex justify-center items-center space-x-4">
@@ -66,9 +97,6 @@ export const ReportForm: React.FC = () => {
       </div>
 
       <div className="bg-card border border-border p-8 rounded-3xl shadow-xl min-h-[450px] flex flex-col relative overflow-hidden">
-        {/* Decor */}
-        <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 dark:bg-blue-900/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2" />
-
         <AnimatePresence mode="wait">
           {step === 1 && (
             <motion.div
@@ -80,18 +108,19 @@ export const ReportForm: React.FC = () => {
             >
               <h3 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <span className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 flex items-center justify-center text-sm">1</span>
-                <span>Issue Category</span>
+                <span>{t.issueCategory}</span>
               </h3>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">What type of issue are you facing?</label>
+                  <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">
+                    {language === "hi" ? "आप किस प्रकार की समस्या का सामना कर रहे हैं?" : "What type of issue are you facing?"}
+                  </label>
                   <input
                     type="text"
-                    placeholder="e.g., Pothole, Street Light, Waste Collection..."
-                    className="w-full px-5 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-card transition-all text-lg"
+                    placeholder={language === "hi" ? "उदा., गड्ढा, स्ट्रीट लाइट..." : "e.g., Pothole, Street Light..."}
+                    className="w-full px-5 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-700 transition-all text-lg"
                     value={formData.issueType}
                     onChange={(e) => setFormData({ ...formData, issueType: e.target.value })}
-                    autoFocus
                   />
                   <div className="mt-4 flex flex-wrap gap-2">
                     {["Road Repair", "Water Leakage", "Garbage", "Power Cut"].map(tag => (
@@ -119,15 +148,15 @@ export const ReportForm: React.FC = () => {
             >
               <h3 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <span className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 flex items-center justify-center text-sm">2</span>
-                <span>Details & Media</span>
+                <span>{t.detailsMedia}</span>
               </h3>
               <div className="space-y-6">
                 <div>
-                  <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">Describe the situation</label>
+                  <label className="block text-sm font-bold mb-3 text-muted-foreground uppercase tracking-wider">{language === "hi" ? "स्थिति का वर्णन करें" : "Describe the situation"}</label>
                   <textarea
-                    rows={5}
-                    placeholder="Provide as much detail as possible (location, time, severity)..."
-                    className="w-full px-5 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-700 focus:bg-card transition-all"
+                    rows={4}
+                    placeholder={language === "hi" ? "जितना संभव हो उतना विवरण प्रदान करें..." : "Provide as much detail as possible..."}
+                    className="w-full px-5 py-4 bg-muted/50 border border-border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-700 transition-all"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   />
@@ -135,38 +164,50 @@ export const ReportForm: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div 
-                    onClick={() => setFormData({...formData, hasImage: true})}
+                    onClick={() => imageInputRef.current?.click()}
                     className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all ${
-                      formData.hasImage ? "border-green-500 bg-green-50 dark:bg-green-900/10" : "border-border hover:border-blue-300 hover:bg-blue-50/50"
+                      formData.imageFile ? "border-green-500 bg-green-50 dark:bg-green-900/10" : "border-border hover:border-blue-300 hover:bg-blue-50/50"
                     }`}
                   >
-                    {formData.hasImage ? (
-                      <div className="flex flex-col items-center">
+                    {formData.imageFile ? (
+                      <div className="flex flex-col items-center relative w-full">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setFormData({...formData, imageFile: null}); }}
+                          className="absolute -top-4 -right-4 p-1 bg-red-500 text-white rounded-full"
+                        >
+                          <X size={12} />
+                        </button>
                         <CheckCircle2 className="text-green-600 mb-2" size={32} />
-                        <span className="text-xs font-bold text-green-700">Image Attached</span>
+                        <span className="text-xs font-bold text-green-700 truncate max-w-full">{formData.imageFile.name}</span>
                       </div>
                     ) : (
                       <>
                         <ImageIcon className="text-muted-foreground mb-2" size={32} />
-                        <span className="text-xs font-bold text-muted-foreground uppercase">Upload Image</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase">{t.uploadPhoto}</span>
                       </>
                     )}
                   </div>
                   <div 
-                    onClick={() => setFormData({...formData, hasVideo: true})}
+                    onClick={() => videoInputRef.current?.click()}
                     className={`p-6 border-2 border-dashed rounded-2xl flex flex-col items-center justify-center cursor-pointer transition-all ${
-                      formData.hasVideo ? "border-green-500 bg-green-50 dark:bg-green-900/10" : "border-border hover:border-blue-300 hover:bg-blue-50/50"
+                      formData.videoFile ? "border-green-500 bg-green-50 dark:bg-green-900/10" : "border-border hover:border-blue-300 hover:bg-blue-50/50"
                     }`}
                   >
-                    {formData.hasVideo ? (
-                      <div className="flex flex-col items-center">
+                    {formData.videoFile ? (
+                      <div className="flex flex-col items-center relative w-full">
+                        <button 
+                          onClick={(e) => { e.stopPropagation(); setFormData({...formData, videoFile: null}); }}
+                          className="absolute -top-4 -right-4 p-1 bg-red-500 text-white rounded-full"
+                        >
+                          <X size={12} />
+                        </button>
                         <CheckCircle2 className="text-green-600 mb-2" size={32} />
-                        <span className="text-xs font-bold text-green-700">Video Attached</span>
+                        <span className="text-xs font-bold text-green-700 truncate max-w-full">{formData.videoFile.name}</span>
                       </div>
                     ) : (
                       <>
                         <VideoIcon className="text-muted-foreground mb-2" size={32} />
-                        <span className="text-xs font-bold text-muted-foreground uppercase">Upload Video</span>
+                        <span className="text-xs font-bold text-muted-foreground uppercase">{t.uploadVideo}</span>
                       </>
                     )}
                   </div>
@@ -185,30 +226,21 @@ export const ReportForm: React.FC = () => {
             >
               <h3 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <span className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 flex items-center justify-center text-sm">3</span>
-                <span>Review Report</span>
+                <span>{t.review}</span>
               </h3>
               <div className="bg-muted/50 p-6 rounded-2xl space-y-4 border border-border">
                 <div className="flex justify-between items-center border-b border-border/50 pb-3">
-                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-tight">Category</span>
+                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-tight">{language === "hi" ? "श्रेणी" : "Category"}</span>
                   <span className="font-bold text-blue-900 dark:text-blue-100">{formData.issueType}</span>
                 </div>
                 <div className="space-y-1">
-                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-tight">Description</span>
+                  <span className="text-muted-foreground text-sm font-bold uppercase tracking-tight">{language === "hi" ? "विवरण" : "Description"}</span>
                   <p className="text-sm leading-relaxed">{formData.description}</p>
                 </div>
-                <div className="flex space-x-3 mt-4">
-                  {formData.hasImage && <div className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 rounded-full text-xs font-bold border border-green-200">Image Attached</div>}
-                  {formData.hasVideo && <div className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 rounded-full text-xs font-bold border border-green-200">Video Attached</div>}
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {formData.imageFile && <div className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 rounded-full text-xs font-bold border border-green-200">Photo: {formData.imageFile.name}</div>}
+                  {formData.videoFile && <div className="px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 rounded-full text-xs font-bold border border-green-200">Video: {formData.videoFile.name}</div>}
                 </div>
-              </div>
-              
-              <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 flex items-start space-x-3">
-                <div className="p-2 bg-blue-600 text-white rounded-lg shrink-0">
-                  <Upload size={16} />
-                </div>
-                <p className="text-xs text-blue-800 dark:text-blue-300 leading-normal">
-                  Your report will be shared with the relevant department. Personal information is handled securely under our privacy policy.
-                </p>
               </div>
             </motion.div>
           )}
@@ -220,31 +252,18 @@ export const ReportForm: React.FC = () => {
               animate={{ opacity: 1, scale: 1 }}
               className="flex-1 flex flex-col items-center justify-center text-center space-y-6"
             >
-              <div className="relative">
-                <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle2 size={56} />
-                </div>
-                <motion.div 
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.5 }}
-                  className="absolute -top-2 -right-2 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center border-4 border-card"
-                >
-                  <CheckCircle2 size={20} />
-                </motion.div>
+              <div className="w-24 h-24 bg-green-100 dark:bg-green-900/30 text-green-600 rounded-full flex items-center justify-center shadow-lg">
+                <CheckCircle2 size={56} />
               </div>
               <div>
-                <h3 className="text-2xl font-bold mb-2">Report Submitted Successfully</h3>
-                <p className="text-muted-foreground">Your Reference ID is <span className="font-bold text-blue-700">CC-2026-X12</span></p>
-              </div>
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-2xl border border-green-100 dark:border-green-800">
-                <p className="text-sm text-green-800 dark:text-green-300 font-bold">100 Credits Earned! 🪙</p>
+                <h3 className="text-2xl font-bold mb-2">{language === "hi" ? "शिकायत सफलतापूर्वक दर्ज की गई" : "Report Submitted Successfully"}</h3>
+                <p className="text-muted-foreground">{language === "hi" ? "आपकी संदर्भ आईडी है" : "Your Reference ID is"} <span className="font-bold text-blue-700">SB-2026-X12</span></p>
               </div>
               <button 
-                onClick={() => { setStep(1); setFormData({ issueType: "", description: "", hasImage: false, hasVideo: false }); }}
+                onClick={() => { setStep(1); setFormData({ issueType: "", description: "", imageFile: null, videoFile: null }); }}
                 className="px-8 py-3 bg-blue-700 text-white rounded-xl font-bold hover:bg-blue-800 transition-all shadow-lg active:scale-95"
               >
-                File Another Report
+                {language === "hi" ? "एक और शिकायत दर्ज करें" : "File Another Report"}
               </button>
             </motion.div>
           )}
@@ -258,18 +277,18 @@ export const ReportForm: React.FC = () => {
                 className="flex items-center space-x-2 text-muted-foreground hover:text-blue-700 font-bold transition-colors"
               >
                 <ChevronLeft size={20} />
-                <span>Previous</span>
+                <span>{language === "hi" ? "पीछे" : "Previous"}</span>
               </button>
             ) : (
               <div />
             )}
             <button
               onClick={step === 3 ? handleSubmit : handleNext}
-              className={`px-10 py-3 rounded-xl font-bold flex items-center space-x-2 shadow-lg active:scale-95 transition-all ${
+              className={`px-10 py-3 rounded-xl font-bold flex items-center space-x-2 shadow-lg transition-all ${
                 step === 3 ? "bg-green-600 text-white hover:bg-green-700" : "bg-blue-700 text-white hover:bg-blue-800"
               }`}
             >
-              <span>{step === 3 ? "Confirm & Submit" : "Continue"}</span>
+              <span>{step === 3 ? t.submit : (language === "hi" ? "आगे बढ़ें" : "Continue")}</span>
               {step < 3 && <ChevronRight size={18} />}
             </button>
           </div>

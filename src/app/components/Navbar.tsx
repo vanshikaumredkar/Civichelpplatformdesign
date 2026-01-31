@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Sun, Moon, Globe, User, ChevronDown, LayoutDashboard, FileText, Info, LogOut, Phone } from "lucide-react";
+import { Sun, Moon, Globe, User, LayoutDashboard, FileText, LogOut, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { translations } from "@/app/utils/translations";
 
 interface NavbarProps {
   darkMode: boolean;
@@ -30,19 +31,20 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const t = translations[language] || translations.en;
 
   const navItems = [
-    { id: "home", label: "Home", icon: null },
-    { id: "dashboard", label: "Dashboard", icon: <LayoutDashboard size={16} />, auth: true },
-    { id: "about", label: "About", icon: null },
-    { id: "contact", label: "Contact", icon: null },
+    { id: "home", label: t.home, icon: null },
+    { id: "dashboard", label: t.dashboard, icon: <LayoutDashboard size={16} />, auth: true },
+    { id: "about", label: t.about, icon: null },
+    { id: "contact", label: t.contact, icon: null },
   ];
 
   return (
     <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
+          {/* Logo - Swavlamban Bharat */}
           <div 
             className="flex items-center cursor-pointer group" 
             onClick={() => onNavigate("home")}
@@ -52,9 +54,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg tracking-tight leading-none text-blue-900 dark:text-blue-100">
-                Civic<span className="text-green-600">Connect</span>
+                {t.brand.split(' ')[0]}<span className="text-green-600">{t.brand.split(' ')[1] || ""}</span>
               </span>
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Tech for Governance</span>
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{t.tagline}</span>
             </div>
           </div>
 
@@ -86,6 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               >
                 <Globe size={18} className="text-blue-700" />
                 <span className="text-xs font-bold uppercase hidden sm:inline">{language === "en" ? "EN" : "HI"}</span>
+                <ChevronDown size={12} className={`transition-transform ${isLangDropdownOpen ? 'rotate-180' : ''}`} />
               </button>
               <AnimatePresence>
                 {isLangDropdownOpen && (
@@ -122,7 +125,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               {darkMode ? <Sun size={18} className="text-yellow-500" /> : <Moon size={18} className="text-blue-700" />}
             </button>
 
-            {/* Report Issue Button - Primary */}
+            {/* Report Issue Button */}
             <button
               onClick={() => onNavigate("report")}
               className={`hidden sm:flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-md active:scale-95 ${
@@ -132,7 +135,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <FileText size={16} />
-              <span>Report Issue</span>
+              <span>{t.reportIssue}</span>
             </button>
 
             {/* Profile / Auth */}
@@ -157,14 +160,14 @@ export const Navbar: React.FC<NavbarProps> = ({
                         className="flex items-center space-x-2 px-4 py-2 text-sm w-full text-left hover:bg-muted"
                       >
                         <LayoutDashboard size={16} />
-                        <span>Dashboard</span>
+                        <span>{t.dashboard}</span>
                       </button>
                       <button
                         onClick={() => { onLogout(); setIsProfileDropdownOpen(false); }}
                         className="flex items-center space-x-2 px-4 py-2 text-sm w-full text-left hover:bg-muted text-red-600"
                       >
                         <LogOut size={16} />
-                        <span>Logout</span>
+                        <span>{t.logout}</span>
                       </button>
                     </motion.div>
                   )}
@@ -175,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 onClick={() => onNavigate("login")}
                 className="px-4 py-2 bg-blue-700 text-white rounded-lg text-sm font-bold hover:bg-blue-800 transition-colors shadow-md active:scale-95"
               >
-                Login
+                {t.login}
               </button>
             )}
           </div>
