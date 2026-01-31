@@ -14,6 +14,23 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, language = "en" }) => {
   
   return (
     <div className="relative overflow-hidden bg-background">
+      {/* Tiranga Watermark for Hero */}
+      <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden flex flex-col opacity-[0.05] dark:opacity-[0.08]">
+        <div className="h-[20%] w-full bg-[#FF9933]"></div>
+        <div className="h-[60%] w-full bg-white dark:bg-slate-900 flex items-center justify-center">
+          <div className="w-[500px] h-[500px] border-[16px] border-blue-900 rounded-full flex items-center justify-center relative">
+            {[...Array(24)].map((_, i) => (
+              <div 
+                key={i} 
+                className="absolute w-full h-1.5 bg-blue-900" 
+                style={{ transform: `rotate(${i * 15}deg)` }}
+              ></div>
+            ))}
+          </div>
+        </div>
+        <div className="h-[20%] w-full bg-[#128807]"></div>
+      </div>
+
       <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-[600px] h-[600px] bg-blue-100 dark:bg-blue-900/10 rounded-full blur-3xl opacity-50" />
       <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 w-[400px] h-[400px] bg-green-100 dark:bg-green-900/10 rounded-full blur-3xl opacity-50" />
 

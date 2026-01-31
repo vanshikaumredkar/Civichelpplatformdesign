@@ -77,7 +77,29 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background transition-colors duration-300">
+    <div className="min-h-screen bg-background transition-colors duration-300 relative">
+      {/* Tiranga Watermark */}
+      <div className="fixed inset-0 pointer-events-none z-0 opacity-[0.03] overflow-hidden flex flex-col">
+        <div className="h-1/3 w-full bg-[#FF9933]"></div>
+        <div className="h-1/3 w-full bg-white flex items-center justify-center">
+          <div className="w-64 h-64 border-8 border-blue-900 rounded-full flex items-center justify-center opacity-20">
+            <div className="w-full h-1 bg-blue-900 absolute rotate-0"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-15"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-30"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-45"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-60"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-75"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-90"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-105"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-120"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-135"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-150"></div>
+            <div className="w-full h-1 bg-blue-900 absolute rotate-165"></div>
+          </div>
+        </div>
+        <div className="h-1/3 w-full bg-[#128807]"></div>
+      </div>
+
       <Toaster position="top-right" expand={false} richColors />
       
       <Navbar 

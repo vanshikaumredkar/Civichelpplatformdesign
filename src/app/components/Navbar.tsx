@@ -41,7 +41,10 @@ export const Navbar: React.FC<NavbarProps> = ({
   ];
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm">
+    <nav className="sticky top-0 z-50 w-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-sm border-b-4 border-green-600">
+      {/* Tiranga Top Stripe */}
+      <div className="h-1.5 w-full bg-[#FF9933]"></div>
+      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo - Swavlamban Bharat */}
@@ -49,8 +52,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="flex items-center cursor-pointer group" 
             onClick={() => onNavigate("home")}
           >
-            <div className="w-10 h-10 mr-3 bg-blue-700 rounded-xl flex items-center justify-center shadow-lg group-hover:bg-blue-800 transition-colors">
-              <FileText className="text-white" size={24} />
+            <div className="w-12 h-12 mr-3 flex items-center justify-center">
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/5/55/Emblem_of_India.svg" 
+                alt="Satyamev Jayate" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-lg tracking-tight leading-none text-blue-900 dark:text-blue-100">
