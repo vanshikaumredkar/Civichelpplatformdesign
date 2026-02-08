@@ -82,15 +82,19 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, language = "en" }) => {
             transition={{ duration: 1 }}
             className="relative"
           >
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border-8 border-white dark:border-muted">
-              <ImageWithFallback 
-                src="https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2069&auto=format&fit=crop" 
-                alt="Modern Civic Office" 
-                className="w-full h-auto object-cover aspect-[4/3]"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-blue-950/40 to-transparent" />
-            </div>
-            
+<div className="relative w-full flex justify-center">
+  <div className="relative w-full max-w-2xl aspect-video">
+    <iframe
+      src="https://www.youtube.com/embed/_EKFkMGeZks"
+      title="Swavlamban Bharat"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowFullScreen
+      className="absolute inset-0 w-full h-full rounded-2xl"
+    />
+  </div>
+</div>
+
+
             <motion.div 
               animate={{ y: [0, -10, 0] }}
               transition={{ repeat: Infinity, duration: 4 }}
