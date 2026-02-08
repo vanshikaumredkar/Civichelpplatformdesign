@@ -20,11 +20,16 @@ import { translations } from "@/app/utils/translations";
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
-  const [language, setLanguage] = useState("en");
+  const [language, setLanguage] = useState(() => localStorage.getItem("app_language") || "en");
   const [currentPage, setCurrentPage] = useState("home");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const t = translations[language] || translations.en;
+
+  // Handle language persistence
+  useEffect(() => {
+    localStorage.setItem("app_language", language);
+  }, [language]);
 
   // Handle theme toggle
   useEffect(() => {
@@ -48,31 +53,33 @@ const App: React.FC = () => {
   };
 
   const renderPage = () => {
+    const commonProps = { language, onNavigate: setCurrentPage };
+    
     switch (currentPage) {
       case "home":
-        return <Hero onNavigate={setCurrentPage} language={language} />;
+        return <Hero {...commonProps} />;
       case "report":
         return <ReportForm language={language} />;
       case "dashboard":
-        return isLoggedIn ? <Dashboard /> : <Login onLogin={handleLogin} />;
+        return isLoggedIn ? <Dashboard language={language} /> : <Login onLogin={handleLogin} />;
       case "login":
         return <Login onLogin={handleLogin} />;
       case "about":
-        return <About />;
+        return <About language={language} />;
       case "contact":
-        return <Contact />;
+        return <Contact language={language} />;
       case "privacy":
-        return <Privacy />;
+        return <Privacy language={language} />;
       case "terms":
-        return <Terms />;
+        return <Terms language={language} />;
       case "sitemap":
-        return <Sitemap onNavigate={setCurrentPage} />;
+        return <Sitemap {...commonProps} />;
       case "track":
-        return <TrackIssue />;
+        return <TrackIssue language={language} />;
       case "credits":
-        return <Credits />;
+        return <Credits language={language} />;
       default:
-        return <Hero onNavigate={setCurrentPage} language={language} />;
+        return <Hero {...commonProps} />;
     }
   };
 
@@ -128,8 +135,8 @@ const App: React.FC = () => {
       </main>
 
       {/* Floating Elements */}
-      <EmergencyButton />
-      <AIChat />
+      <EmergencyButton language={language} />
+      <AIChat language={language} />
 
       {/* Footer */}
       <footer className="bg-blue-950 text-white mt-20">

@@ -42,7 +42,30 @@ export const ReportForm: React.FC<{ language?: string }> = ({ language = "en" })
   const handleBack = () => setStep(step - 1);
 
   const handleSubmit = () => {
-    toast.success(language === "hi" ? "शिकायत सफलतापूर्वक दर्ज की गई! आईडी: SB-2026-X12" : "Complaint submitted successfully! ID: SB-2026-X12");
+    // Simulated AI Classification
+    const criticalKeywords = ["accident", "burst", "fire", "flood", "collapse", "broken", "massive", "danger"];
+    const isMajor = criticalKeywords.some(key => 
+      formData.issueType.toLowerCase().includes(key) || 
+      formData.description.toLowerCase().includes(key)
+    );
+    
+    const aiLabel = isMajor ? "Major" : "Minor";
+    
+    const newReport = {
+      id: `SB-2026-${Math.random().toString(36).substr(2, 4).toUpperCase()}`,
+      type: formData.issueType,
+      location: "Current Location", // Placeholder
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      status: "Pending",
+      aiClassification: aiLabel,
+      description: formData.description
+    };
+
+    // Save to localStorage for demo persistence
+    const existingReports = JSON.parse(localStorage.getItem("userReports") || "[]");
+    localStorage.setItem("userReports", JSON.stringify([newReport, ...existingReports]));
+
+    toast.success(language === "hi" ? `शिकायत सफलतापूर्वक दर्ज की गई! आईडी: ${newReport.id}` : `Complaint submitted successfully! ID: ${newReport.id}`);
     setStep(4);
   };
 

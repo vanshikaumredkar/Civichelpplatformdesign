@@ -9,13 +9,20 @@ interface Message {
   time: string;
 }
 
-export const AIChat: React.FC = () => {
+export const AIChat: React.FC<{ language?: string }> = ({ language = "en" }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, text: "Namaste! I am your Swavlamban Sahayak. How can I help you today?", sender: "bot", time: "10:00 AM" }
+    { id: 1, text: language === "hi" ? "नमस्ते! मैं आपका स्वावलंबन सहायक हूं। मैं आज आपकी क्या सहायता कर सकता हूं?" : "Namaste! I am your Swavlamban Sahayak. How can I help you today?", sender: "bot", time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
   ]);
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Sync initial message if language changes while chat is empty or just started
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].sender === "bot") {
+      setMessages([{ id: 1, text: language === "hi" ? "नमस्ते! मैं आपका स्वावलंबन सहायक हूं। मैं आज आपकी क्या सहायता कर सकता हूं?" : "Namaste! I am your Swavlamban Sahayak. How can I help you today?", sender: "bot", time: messages[0].time }]);
+    }
+  }, [language]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,7 +50,7 @@ export const AIChat: React.FC = () => {
     setTimeout(() => {
       const botMsg: Message = {
         id: Date.now() + 1,
-        text: getAIResponse(input),
+        text: getAIResponse(input, language),
         sender: "bot",
         time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       };
@@ -51,12 +58,26 @@ export const AIChat: React.FC = () => {
     }, 1000);
   };
 
-  const getAIResponse = (text: string) => {
+  const getAIResponse = (text: string, lang: string) => {
     const t = text.toLowerCase();
-    if (t.includes("report") || t.includes("शिकायत")) return "You can report an issue by going to the 'Report Issue' section in the menu. What problem are you facing?";
-    if (t.includes("track") || t.includes("status")) return "To track your complaint, please provide your Complaint ID or Mobile number in the 'Track Issue' section.";
-    if (t.includes("credits") || t.includes("coins")) return "You earn coins for every complaint you file and verify. You can redeem them in the 'Credits' section for daily products.";
-    return "Bilkul! I can help you with reporting civic issues, tracking them, or understanding our reward system. Please tell me more.";
+    if (t.includes("report") || t.includes("शिकायत")) {
+      return lang === "hi" 
+        ? "आप मेनू में 'शिकायत दर्ज करें' अनुभाग पर जाकर शिकायत दर्ज कर सकते हैं। आप किस समस्या का सामना कर रहे हैं?" 
+        : "You can report an issue by going to the 'Report Issue' section in the menu. What problem are you facing?";
+    }
+    if (t.includes("track") || t.includes("status")) {
+      return lang === "hi" 
+        ? "अपनी शिकायत को ट्रैक करने के लिए, कृपया 'ट्रैक इशू' अनुभाग में अपनी शिकायत आईडी या मोबाइल नंबर प्रदान करें।" 
+        : "To track your complaint, please provide your Complaint ID or Mobile number in the 'Track Issue' section.";
+    }
+    if (t.includes("credits") || t.includes("coins")) {
+      return lang === "hi" 
+        ? "आप अपनी प्रत्येक शिकायत दर्ज करने और सत्यापित करने पर सिक्के कमाते हैं। आप उन्हें दैनिक उत्पादों के लिए 'क्रेडिट' अनुभाग में भुना सकते हैं।" 
+        : "You earn coins for every complaint you file and verify. You can redeem them in the 'Credits' section for daily products.";
+    }
+    return lang === "hi" 
+      ? "बिल्कुल! मैं नागरिक मुद्दों की रिपोर्ट करने, उन्हें ट्रैक करने या हमारी इनाम प्रणाली को समझने में आपकी सहायता कर सकता हूं। कृपया मुझे और बताएं।" 
+      : "Bilkul! I can help you with reporting civic issues, tracking them, or understanding our reward system. Please tell me more.";
   };
 
   return (
@@ -76,10 +97,10 @@ export const AIChat: React.FC = () => {
                   <Cpu size={24} />
                 </div>
                 <div>
-                  <div className="font-bold text-sm">Swavlamban Sahayak</div>
+                  <div className="font-bold text-sm">{language === "hi" ? "स्वावलंबन सहायक" : "Swavlamban Sahayak"}</div>
                   <div className="text-[10px] opacity-80 flex items-center">
                     <div className="w-2 h-2 bg-green-400 rounded-full mr-1" />
-                    AI Assistant • Online
+                    {language === "hi" ? "AI सहायक • ऑनलाइन" : "AI Assistant • Online"}
                   </div>
                 </div>
               </div>
@@ -117,7 +138,7 @@ export const AIChat: React.FC = () => {
             <form onSubmit={handleSend} className="p-4 bg-card border-t border-border flex items-center space-x-2">
               <input
                 type="text"
-                placeholder="Type in English or Hinglish..."
+                placeholder={language === "hi" ? "अंग्रेजी या हिंग्लिश में टाइप करें..." : "Type in English or Hinglish..."}
                 className="flex-1 bg-muted px-4 py-2 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-[var(--ashoka-blue)]"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -147,7 +168,7 @@ export const AIChat: React.FC = () => {
         {/* Tooltip */}
         {!isOpen && (
           <div className="absolute right-16 bg-card border border-border px-3 py-1.5 rounded-lg shadow-lg text-xs font-bold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-            How can I help you? 👋
+            {language === "hi" ? "मैं आपकी कैसे सहायता कर सकता हूँ?" : "How can I help you?"} 👋
           </div>
         )}
       </motion.button>

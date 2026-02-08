@@ -1,33 +1,33 @@
 import React from "react";
 import { Map as MapIcon, Link as LinkIcon, MapPin, Globe, Compass, Layout } from "lucide-react";
 
-export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNavigate }) => {
+export const Sitemap: React.FC<{ language?: string, onNavigate: (page: string) => void }> = ({ language = "en", onNavigate }) => {
   const sections = [
     {
-      title: "Primary Pages",
+      title: language === "hi" ? "प्राथमिक पृष्ठ" : "Primary Pages",
       links: [
-        { label: "Home Page", id: "home" },
-        { label: "About CivicConnect", id: "about" },
-        { label: "Report an Issue", id: "report" },
-        { label: "Admin Dashboard", id: "dashboard" },
-        { label: "Contact Us", id: "contact" },
+        { label: language === "hi" ? "मुख्य पृष्ठ" : "Home Page", id: "home" },
+        { label: language === "hi" ? "हमारे बारे में" : "About Platform", id: "about" },
+        { label: language === "hi" ? "शिकायत दर्ज करें" : "Report an Issue", id: "report" },
+        { label: language === "hi" ? "नागरिक डैशबोर्ड" : "Citizen Dashboard", id: "dashboard" },
+        { label: language === "hi" ? "संपर्क करें" : "Contact Us", id: "contact" },
       ]
     },
     {
-      title: "User Account",
+      title: language === "hi" ? "उपयोगकर्ता खाता" : "User Account",
       links: [
-        { label: "Login Portal", id: "login" },
-        { label: "Register (Coming Soon)", id: "home" },
-        { label: "My Profile", id: "dashboard" },
+        { label: language === "hi" ? "लॉगिन पोर्टल" : "Login Portal", id: "login" },
+        { label: language === "hi" ? "रजिस्टर (जल्द आ रहा है)" : "Register (Coming Soon)", id: "home" },
+        { label: language === "hi" ? "मेरी प्रोफाइल" : "My Profile", id: "dashboard" },
       ]
     },
     {
-      title: "Legal & Info",
+      title: language === "hi" ? "कानूनी और जानकारी" : "Legal & Info",
       links: [
-        { label: "Privacy Policy", id: "privacy" },
-        { label: "Terms of Service", id: "terms" },
-        { label: "Reward Guidelines", id: "terms" },
-        { label: "Sitemap", id: "sitemap" },
+        { label: language === "hi" ? "गोपनीयता नीति" : "Privacy Policy", id: "privacy" },
+        { label: language === "hi" ? "सेवा की शर्तें" : "Terms of Service", id: "terms" },
+        { label: language === "hi" ? "इनाम दिशानिर्देश" : "Reward Guidelines", id: "terms" },
+        { label: language === "hi" ? "साइटमैप" : "Sitemap", id: "sitemap" },
       ]
     }
   ];
@@ -38,9 +38,9 @@ export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
         <div>
           <h2 className="text-4xl font-extrabold text-blue-950 dark:text-white mb-2 flex items-center gap-3">
             <Compass className="text-blue-700" size={32} />
-            <span>Sitemap</span>
+            <span>{language === "hi" ? "साइटमैप" : "Sitemap"}</span>
           </h2>
-          <p className="text-muted-foreground font-medium">Quick links and regional coverage map.</p>
+          <p className="text-muted-foreground font-medium">{language === "hi" ? "त्वरित लिंक और क्षेत्रीय कवरेज मानचित्र।" : "Quick links and regional coverage map."}</p>
         </div>
         <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-xs font-bold border border-blue-100">
           <Globe size={14} />
@@ -54,9 +54,9 @@ export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
           <div className="p-8 border-b border-border bg-muted/30">
             <h3 className="text-2xl font-bold flex items-center gap-2">
               <MapIcon className="text-blue-700" size={24} />
-              <span>Coverage Map</span>
+              <span>{language === "hi" ? "कवरेज मानचित्र" : "Coverage Map"}</span>
             </h3>
-            <p className="text-sm text-muted-foreground mt-1">Our platform currently covers 12 major zones across the metropolitan region.</p>
+            <p className="text-sm text-muted-foreground mt-1">{language === "hi" ? "हमारा प्लेटफॉर्म वर्तमान में महानगरीय क्षेत्र के 12 प्रमुख क्षेत्रों को कवर करता है।" : "Our platform currently covers 12 major zones across the metropolitan region."}</p>
           </div>
           
           <div className="aspect-[21/9] bg-blue-50 dark:bg-blue-900/10 relative overflow-hidden flex items-center justify-center">
@@ -68,10 +68,10 @@ export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
             {/* Map Markers */}
             <div className="relative w-full h-full">
               {[
-                { top: "20%", left: "30%", label: "Zone A" },
-                { top: "45%", left: "60%", label: "Zone B" },
-                { top: "70%", left: "40%", label: "Zone C" },
-                { top: "30%", left: "80%", label: "Zone D" },
+                { top: "20%", left: "30%", label: language === "hi" ? "क्षेत्र अ" : "Zone A" },
+                { top: "45%", left: "60%", label: language === "hi" ? "क्षेत्र ब" : "Zone B" },
+                { top: "70%", left: "40%", label: language === "hi" ? "क्षेत्र स" : "Zone C" },
+                { top: "30%", left: "80%", label: language === "hi" ? "क्षेत्र द" : "Zone D" },
               ].map((m, i) => (
                 <div 
                   key={i}
@@ -92,8 +92,8 @@ export const Sitemap: React.FC<{ onNavigate: (page: string) => void }> = ({ onNa
                 <MapPin size={20} />
               </div>
               <div>
-                <div className="text-xs font-bold uppercase text-muted-foreground">Active Zones</div>
-                <div className="text-lg font-bold">12 Areas Live</div>
+                <div className="text-xs font-bold uppercase text-muted-foreground">{language === "hi" ? "सक्रिय क्षेत्र" : "Active Zones"}</div>
+                <div className="text-lg font-bold">{language === "hi" ? "12 क्षेत्र लाइव हैं" : "12 Areas Live"}</div>
               </div>
             </div>
           </div>

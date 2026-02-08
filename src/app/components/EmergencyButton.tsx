@@ -9,7 +9,7 @@ const helplines = [
   { name: "Women Helpline", number: "1091", icon: ShieldAlert, color: "bg-purple-100 text-purple-700" },
 ];
 
-export const EmergencyButton: React.FC = () => {
+export const EmergencyButton: React.FC<{ language?: string }> = ({ language = "en" }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -23,7 +23,7 @@ export const EmergencyButton: React.FC = () => {
         }`}
       >
         {isOpen ? <X size={18} /> : <Phone size={18} />}
-        <span>{isOpen ? "Close" : "Emergency"}</span>
+        <span>{isOpen ? (language === "hi" ? "बंद करें" : "Close") : (language === "hi" ? "आपातकालीन" : "Emergency")}</span>
       </motion.button>
 
       <AnimatePresence>
@@ -35,7 +35,7 @@ export const EmergencyButton: React.FC = () => {
             className="absolute top-12 right-0 w-64 bg-card border border-border shadow-2xl rounded-2xl overflow-hidden"
           >
             <div className="p-4 bg-red-50 border-b border-red-100">
-              <h4 className="text-red-700 font-bold text-xs uppercase tracking-widest">Emergency Helplines</h4>
+              <h4 className="text-red-700 font-bold text-xs uppercase tracking-widest">{language === "hi" ? "आपातकालीन हेल्पलाइन" : "Emergency Helplines"}</h4>
             </div>
             <div className="p-2">
               {helplines.map((item) => (
@@ -49,7 +49,7 @@ export const EmergencyButton: React.FC = () => {
                       <item.icon size={16} />
                     </div>
                     <div>
-                      <div className="text-sm font-bold">{item.name}</div>
+                      <div className="text-sm font-bold">{language === "hi" ? (item.name === "Police" ? "पुलिस" : item.name === "Fire" ? "दमकल" : item.name === "Ambulance" ? "एम्बुलेंस" : "महिला हेल्पलाइन") : item.name}</div>
                       <div className="text-xs text-muted-foreground">{item.number}</div>
                     </div>
                   </div>
@@ -60,7 +60,7 @@ export const EmergencyButton: React.FC = () => {
               ))}
             </div>
             <div className="p-4 bg-muted text-[10px] text-center text-muted-foreground">
-              Available 24/7 across India
+              {language === "hi" ? "पूरे भारत में 24/7 उपलब्ध" : "Available 24/7 across India"}
             </div>
           </motion.div>
         )}
